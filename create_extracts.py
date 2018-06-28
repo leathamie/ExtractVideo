@@ -5,7 +5,7 @@ import sys
 import shutil
 import datetime
 import subprocess
-from progressbar import ProgressBar
+#from progressbar import ProgressBar
 
 def read_lab(lab):
     """ read the speech activity detection and output list of 
@@ -52,14 +52,41 @@ def read_rttm(rttm):
 
 def concatenate(sad, dur):
     """ take a list of onsets and offsets and a duartion. It contatenate
-    two onsets if the offset between them lasts less than dur """
+    wo onsets if the offset between them lasts less than dur """
+    onlyTrueList = []
+    for on, off, state in sad: 
+        i = len(onlyTrueList)-1
+        if state == 'True':
+            if i<0:
+                onlyTrueList.append([on,off])
+            else:
+                if on == onlyTrueList[i][1]:
+                    onlyTrueList[i][1] = off
+                else:
+                    onlyTrueList.append([on,off])
+        else:
+            duration = off - on;
+            if duration <= dur:
+                onlyTrueList[i][1] = off
+    return onlyTrueList
+        
+def deleteByLength(sad, dur):
+    returnList = []
+    for on, off in sad:
+        duration = off - on
+        if duration > dur:
+            returnList.append([on, off])
+    return returnList        
+        
     
-
+    
 def cut_video(sad, in_wav, out_folder):
     """ take list of onsets and offsets and cut the video at these times"""
+    totalDur= 0
     for on, off in sad:
-        #dur = off - on
-        dur = off
+        dur = off - on
+        totalDur = totalDur + dur
+        #dur = off
         # convert the onset/offsets in hh:mm:ss format for ffmpeg
         hour_on = str(datetime.timedelta(seconds=on))
         hour_dur = str(datetime.timedelta(seconds=dur))
@@ -74,6 +101,7 @@ def cut_video(sad, in_wav, out_folder):
                '-i', '{}'.format(in_wav), '-c', 'copy', '-t','{}'.format(hour_dur),
                out_file]
         process = subprocess.call(cmd)
+    print ("durée totale : " + str(totalDur))
     return process
 
 def main():
@@ -89,7 +117,18 @@ def main():
     # cut_video
     cut_video(sad, video, out_folder)
     """
-    filename = 
+    video = 'data/011100.mp4'
+    out_folder = 'data'
+    filename = 'datatest/011100.lab'
+    sad = read_lab_getAll(filename)
+    print (str(len(sad)))
+    sad = concatenate(sad, 0.0000005)
+    sad = deleteByLength(sad, 1)
+    print (str(len(sad)))
+    print (str(sad))
+    cut_video(sad, video, out_folder)
+    
+    
 
 
 if __name__ == "__main__":
