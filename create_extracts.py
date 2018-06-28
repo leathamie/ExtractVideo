@@ -20,10 +20,21 @@ def read_lab(lab):
                 sad.append((float(on), float(off)))
 
     return sad
-def read_txt(txt):
+
+def read_lab_getAll(lab):
     """ read the speech activity detection and output list of 
         onsets and offsets"""
-    
+    sad = []
+    with open(lab, 'r') as fin:
+        speech = fin.readlines()
+        for line in speech:
+            on, off, state = line.strip('\n').split(' ')
+            if state == "speech":
+                sad.append((float(on), float(off), 'True'))
+            else: 
+                sad.append((float(on), float(off), 'False'))
+    return sad
+
     
 def read_rttm(rttm):
     """ read the speech activity detection in rttm format and output
@@ -38,6 +49,11 @@ def read_rttm(rttm):
             except:
                 pass
     return sad
+
+def concatenate(sad, dur):
+    """ take a list of onsets and offsets and a duartion. It contatenate
+    two onsets if the offset between them lasts less than dur """
+    
 
 def cut_video(sad, in_wav, out_folder):
     """ take list of onsets and offsets and cut the video at these times"""
@@ -58,9 +74,10 @@ def cut_video(sad, in_wav, out_folder):
                '-i', '{}'.format(in_wav), '-c', 'copy', '-t','{}'.format(hour_dur),
                out_file]
         process = subprocess.call(cmd)
-    return
+    return process
 
 def main():
+    """
     # read arguments
     lab = sys.argv[1]
     video = sys.argv[2]
@@ -71,6 +88,9 @@ def main():
     sad = read_rttm(lab)
     # cut_video
     cut_video(sad, video, out_folder)
+    """
+    filename = 
+
 
 if __name__ == "__main__":
     main()
