@@ -64,14 +64,13 @@ def concatenate(sad, dur):
     onlyTrueList = []
     for on, off, state in sad: 
         i = len(onlyTrueList)-1
+        if i<0:
+            onlyTrueList.append([on,off])
         if state == 'True':
-            if i<0:
-                onlyTrueList.append([on,off])
+            if on == onlyTrueList[i][1]:
+                onlyTrueList[i][1] = off
             else:
-                if on == onlyTrueList[i][1]:
-                    onlyTrueList[i][1] = off
-                else:
-                    onlyTrueList.append([on,off])
+                onlyTrueList.append([on,off])
         else:
             duration = off - on;
             if duration <= dur:
@@ -112,6 +111,34 @@ def cut_video(sad, in_wav, out_folder):
     print ("durée totale : " + str(totalDur))
     return process
 
+def timeMatch(sad1,sad2):
+    if len(sad1) > len(sad2):
+        bigSad = sad1
+        smallSad = sad2
+    else:
+        bigSad = sad2
+        smallSad = sad1
+    i=0
+    j=0
+    sad  = []
+    while i<len(bigSad) and j<len(smallSad):
+        bon = bigSad[i][0]
+        boff = bigSad[i][1]
+        son = smallSad[j][0]
+        soff = smallSad[j][1]
+        if bon <= son and boff >= soff:
+            print ('1')
+            sad.append([son,soff])
+            j = j + 1
+        elif boff < soff : 
+            print("2")
+            i = i + 1
+        else:
+            print("3")
+            j = i + 1
+    return sad
+                    
+
 def main():
     """
     # read arguments
@@ -128,18 +155,25 @@ def main():
     video = 'data/011100.mp4'
     out_folder = 'data'
     filename = '/home/lea/Stage/DATA/videos/011100.mp4.txt'
-    sad = read_txt(filename)
-    print (str(sad))
-    """
+    sadMotion = read_txt(filename)
+    #print (str(sadMotion))
     filename = 'datatest/011100.lab'
-    sad = read_lab_getAll(filename)
-    print (str(len(sad)))
-    sad = concatenate(sad, 0.0000005)
-    sad = deleteByLength(sad, 1)
-    print (str(len(sad)))
+    sadSpeech = read_lab_getAll(filename)
+    print ("len speech get all " + str(len(sadSpeech)))
+    sadSpeech = concatenate(sadSpeech, 0.5)
+    sadSpeech = deleteByLength(sadSpeech, 5)
+    print ("len speech concat + delete " + str(len(sadSpeech)))
+    print ("len motion " + str(len(sadMotion)))
+    sadMotion = concatenate(sadMotion, 0.5)
+    print ("len motion concat " + str(len(sadMotion)))
+    sadMotion = deleteByLength(sadMotion, 5)
+    print ("len motion delete " + str(len(sadMotion)))
+    print ("motion : " + str(sadMotion))
+    print ('-------------')
+    sad = timeMatch(sadMotion,sadSpeech)
     print (str(sad))
-    cut_video(sad, video, out_folder)
-    """
+    #cut_video(sad, video, out_folder)
+    
     
 
 
