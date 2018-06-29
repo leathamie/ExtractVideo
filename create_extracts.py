@@ -35,7 +35,15 @@ def read_lab_getAll(lab):
                 sad.append((float(on), float(off), 'False'))
     return sad
 
-    
+def read_txt(txt): 
+    sad = []
+    with open(txt, 'r') as fin:
+        speech = fin.readlines()
+        for line in speech:
+            on, off, state = line.strip('\n').split(',')
+            sad.append((float(on), float(off), state))
+    return sad
+
 def read_rttm(rttm):
     """ read the speech activity detection in rttm format and output
         list of onsets and offsets"""
@@ -119,6 +127,10 @@ def main():
     """
     video = 'data/011100.mp4'
     out_folder = 'data'
+    filename = '/home/lea/Stage/DATA/videos/011100.mp4.txt'
+    sad = read_txt(filename)
+    print (str(sad))
+    """
     filename = 'datatest/011100.lab'
     sad = read_lab_getAll(filename)
     print (str(len(sad)))
@@ -127,7 +139,7 @@ def main():
     print (str(len(sad)))
     print (str(sad))
     cut_video(sad, video, out_folder)
-    
+    """
     
 
 
