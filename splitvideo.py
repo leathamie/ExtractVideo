@@ -8,11 +8,12 @@ Created on Mon Jul  2 16:16:44 2018
 import os
 import cv2                            # importing Python OpenCV
 import sys
+import glob
 import shutil
 import datetime
 import subprocess
 
-def cut_video(video_path, dur, in_wav, out_folder):
+def cut_video(video_path, dur,overlap,in_wav, out_folder):
     """ take a video a duration and an ovelap and create extract with the duration and le overlap"""
     video = cv2.VideoCapture(video_path)
     nbframes = video.get(7)
@@ -36,8 +37,8 @@ def cut_video(video_path, dur, in_wav, out_folder):
                '-i', '{}'.format(video_path), '-c', 'copy', '-t','{}'.format(hour_dur),
                out_file]
         process = subprocess.call(cmd)
-        on = on + float(dur) - 1
-        off = off + float(dur) - 1
+        on = on + float(dur) - float(overlap)
+        off = off + float(dur) - float(overlap)
     return process
          
 """ 
@@ -67,13 +68,17 @@ def cut_video(video_path, dur, in_wav, out_folder):
 def main():
     
     # read arguments
-    video = sys.argv[1]
+    videoPath = sys.argv[1]
     dur = sys.argv[2]
     overlap = sys.argv[3]
     out_folder = sys.argv[4]
-
-    # cut_video
-    cut_video(video, dur, overlap, out_folder)
+    for filename in glob.glob(videoPath + '*.mp4'):
+        namelist = filename.split('/')
+        name = namelist[len(namelist)-1]
+        name = name.split('.')[0]
+        cut_video(filename,dur,overlap, name, out_folder)
+    
+    
     
     
     
