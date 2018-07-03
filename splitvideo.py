@@ -34,8 +34,9 @@ def cut_video(video_path, dur,overlap,in_wav, out_folder):
 
         # command to launch
         cmd = ['ffmpeg', '-ss', '{}'.format(hour_on),
-               '-i', '{}'.format(video_path), '-c', 'copy', '-t','{}'.format(hour_dur),
+               '-i', '{}'.format(video_path), '-c', 'copy','-an' ,'-t','{}'.format(hour_dur),
                out_file]
+        print (cmd)
         process = subprocess.call(cmd)
         on = on + float(dur) - float(overlap)
         off = off + float(dur) - float(overlap)
