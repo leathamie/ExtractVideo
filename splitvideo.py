@@ -6,21 +6,30 @@ Created on Mon Jul  2 16:16:44 2018
 @author: lea
 """
 import os
-import cv2                            # importing Python OpenCV
+#import cv2                            # importing Python OpenCV
 import sys
 import glob
-import shutil
+#import shutil
 import datetime
 import subprocess
+import subprocess 
+
+def get_duration(file):
+    """Get the duration of a video using ffprobe."""
+    cmd = 'ffprobe -i {} -show_entries format=duration -v quiet -of csv="p=0"'.format(file)
+    output = subprocess.check_output(
+        cmd,
+        shell=True, # Let this run in the shell
+        stderr=subprocess.STDOUT
+    )
+    # return round(float(output))  # ugly, but rounds your seconds up or down
+    return float(output)
+
 
 def cut_video(video_path, dur,overlap,in_wav, out_folder):
     """ take a video a duration and an ovelap and create extract with the duration and le overlap"""
-    video = cv2.VideoCapture(video_path)
-    nbframes = video.get(7)
-    fps = video.get(5)#frames /sec
-    print("durée de la video " + str(nbframes/fps))
-    print ("number of frames " + str(nbframes))
-    totalDur= nbframes/fps
+    print (video_path)
+    totalDur = get_duration(video_path)
     on = 120.0 # start the cut after 2 minutes
     off = float(dur)
     while off <= totalDur:
