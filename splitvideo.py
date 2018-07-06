@@ -86,7 +86,7 @@ def main():
             namelist = filename.split('/')
             name = namelist[len(namelist)-1]
             name = name.split('.')[0]
-            cut_video(videoPath+filename,dur,overlap, name, out_folder)
+            cut_video(videoPath+'/'+filename,dur,overlap, name, out_folder)
         
     
     
