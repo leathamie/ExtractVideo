@@ -8,11 +8,10 @@ Created on Mon Jul  2 16:16:44 2018
 import os
 #import cv2                            # importing Python OpenCV
 import sys
-import glob
+#import glob
 #import shutil
 import datetime
 import subprocess
-import subprocess 
 
 def get_duration(file):
     """Get the duration of a video using ffprobe."""
@@ -82,12 +81,13 @@ def main():
     dur = sys.argv[2]
     overlap = sys.argv[3]
     out_folder = sys.argv[4]
-    for filename in glob.glob(videoPath + '*.mp4'):
-        namelist = filename.split('/')
-        name = namelist[len(namelist)-1]
-        name = name.split('.')[0]
-        cut_video(filename,dur,overlap, name, out_folder)
-    
+    for filename in os.listdir(videoPath):
+        if filename.endswith('.mp4'):
+            namelist = filename.split('/')
+            name = namelist[len(namelist)-1]
+            name = name.split('.')[0]
+            cut_video(videoPath+filename,dur,overlap, name, out_folder)
+        
     
     
     
