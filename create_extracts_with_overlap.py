@@ -100,6 +100,7 @@ def main():
             if args.get("cha", None) is not None:
                 chafile = args["cha"] + "/" + name + ".cha"
                 if os.path.isfile(chafile):
+                    print("--------------------- " + chafile)
                     on = float(getBigining(chafile))*0.001
                     off = float(getEnd(chafile))*0.001
                     print("end cha file " + str(off))
