@@ -37,8 +37,7 @@ def getAllSpeechDuration(filename):
             
 def getBigining(filename):
     content = extractFileContent(filename)
-    duration_tab = re.findall('[0123456789][0123456789]*_[0123456789][0123456789]*', content)
-    first_duration = duration_tab[0]
+    first_duration = re.findall('[0123456789][0123456789]*_[0123456789][0123456789]*', content)[0]
     on = first_duration.split('_')[0]
     return on
 
