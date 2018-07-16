@@ -90,9 +90,7 @@ def cut_video(video_path, dur,overlap,in_wav, out_folder, begin, end):
         off = off + float(dur) - float(overlap)
     return process
          
-
-
-getBigining('/home/lea/Stage/DATA/chaFiles/Rollins/ch09.cha')  
+ 
 
 def main():
     
