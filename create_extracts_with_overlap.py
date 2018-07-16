@@ -36,9 +36,15 @@ def getAllSpeechDuration(filename):
     return duration_tab
             
 def getBigining(filename):
+    """Get the bigining of the speech in the cha file (str). If the speech duration 
+        is not specified return '-1'. """
     content = extractFileContent(filename)
-    first_duration = re.findall('[0123456789][0123456789]*_[0123456789][0123456789]*', content)[0]
-    on = first_duration.split('_')[0]
+    all_duration = re.findall('[0123456789][0123456789]*_[0123456789][0123456789]*', content)
+    if len(all_duration) > 0:
+        first_duration = all_duration[0]
+        on = first_duration.split('_')[0]
+    else:
+        on = '-1'   
     return on
 
 def getEnd(filename):
@@ -53,7 +59,7 @@ def get_duration(file):
     cmd = 'ffprobe -i {} -show_entries format=duration -v quiet -of csv="p=0"'.format(file)
     output = subprocess.check_output(
         cmd,
-        shell=True, # Let this run in the shell
+        shell = True, # Let this run in the shell
         stderr=subprocess.STDOUT
     )
     # return round(float(output))  # ugly, but rounds your seconds up or down
@@ -85,7 +91,8 @@ def cut_video(video_path, dur,overlap,in_wav, out_folder, begin, end):
     return process
          
 
-    
+
+getBigining('/home/lea/Stage/DATA/chaFiles/Rollins/ch09.cha')  
 
 def main():
     
@@ -102,9 +109,10 @@ def main():
                 if os.path.isfile(chafile):
                     print("--------------------- " + chafile)
                     on = float(getBigining(chafile))*0.001
-                    off = float(getEnd(chafile))*0.001
-                    print("end cha file " + str(off))
-                    cut_video(videoPath,args["duration"],args["overlap"], name, args["output"], on, off)
+                    if (on >= 0):
+                        off = float(getEnd(chafile))*0.001
+                        print("end cha file " + str(off))
+                        cut_video(videoPath,args["duration"],args["overlap"], name, args["output"], on, off)
             else:
                 totalDur = get_duration(videoPath)
                 begin = args["start"] # default : start the cut after 2 minutes
