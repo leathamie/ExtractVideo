@@ -12,16 +12,6 @@ import datetime
 import argparse
 import subprocess
 
-# construct the argument parser and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--input", help="Video(s) folder path")
-ap.add_argument("-o", "--output", help="Videos extracts folder path")
-ap.add_argument("-d", "--duration", type=float, default=4.0, help="Exracts duration in seconds (default : 5sec)")
-ap.add_argument("-ov", "--overlap",type=float, default=1.0, help="Extracts overlap in seconds (default : 1.0)")
-ap.add_argument("-s", "--start", type=float, default=0.0, help="start of cutting in seconds (default: 0)")
-ap.add_argument("-e", "--end", type=float, help="start of cutting in seconds (default: file length)")
-ap.add_argument("-cha", "--cha", help="if a cha folder file is specified, the begin and the and of the cutting will match with the corresponding cha file" )
-args = vars(ap.parse_args())
 
 def extractFileContent(filename):
     fileContent = ""
@@ -93,7 +83,17 @@ def cut_video(video_path, dur,overlap,in_wav, out_folder, begin, end):
  
 
 def main():
-    
+    # construct the argument parser and parse the arguments
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-i", "--input", help="Video(s) folder path")
+    ap.add_argument("-o", "--output", help="Videos extracts folder path")
+    ap.add_argument("-d", "--duration", type=float, default=4.0, help="Exracts duration in seconds (default : 5sec)")
+    ap.add_argument("-ov", "--overlap",type=float, default=1.0, help="Extracts overlap in seconds (default : 1.0)")
+    ap.add_argument("-s", "--start", type=float, default=0.0, help="start of cutting in seconds (default: 0)")
+    ap.add_argument("-e", "--end", type=float, help="start of cutting in seconds (default: file length)")
+    ap.add_argument("-cha", "--cha", help="if a cha folder file is specified, the begin and the and of the cutting will match with the corresponding cha file" )
+    args = vars(ap.parse_args())
+
     # read arguments
     folderPath = args["input"]
     for filename in os.listdir(folderPath):
@@ -108,6 +108,8 @@ def main():
                     print("--------------------- " + chafile)
                     on = float(getBigining(chafile))*0.001
                     if (on >= 0):
+                        if float(args["start"]) > on:
+                            on = float(args["start"])
                         off = float(getEnd(chafile))*0.001
                         print("end cha file " + str(off))
                         cut_video(videoPath,args["duration"],args["overlap"], name, args["output"], on, off)
