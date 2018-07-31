@@ -8,7 +8,7 @@ import subprocess
 #from progressbar import ProgressBar
 
 def read_lab(lab):
-    """ read the speech activity detection and output list of 
+    """ read the speech activity detection in lab format and output list of 
         onsets and offsets"""
     sad = []
 
@@ -22,8 +22,8 @@ def read_lab(lab):
     return sad
 
 def read_lab_getAll(lab):
-    """ read the speech activity detection and output list of 
-        onsets and offsets"""
+    """ read the speech activity detection in lab format and output list of 
+        onsets and offsets and the activity status 'True' or 'False' """
     sad = []
     with open(lab, 'r') as fin:
         speech = fin.readlines()
@@ -36,6 +36,8 @@ def read_lab_getAll(lab):
     return sad
 
 def read_txt(txt): 
+    """ read the speech activity detection in txt format and output list of 
+        onsets and offsets and the activity status ('True' or 'False')"""
     sad = []
     with open(txt, 'r') as fin:
         speech = fin.readlines()
