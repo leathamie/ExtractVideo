@@ -7,23 +7,18 @@ Created on Mon Jul  2 16:16:44 2018
 """
 import os
 import re
-import sys
 import datetime
 import argparse
 import subprocess
 
 
 def extractFileContent(filename):
+    """ take a file path and return the content of the file in a str"""
     fileContent = ""
     file = open(filename, "r")
     for line in file : 
         fileContent = fileContent + line
     return fileContent
-        
-def getAllSpeechDuration(filename):
-    content = extractFileContent(filename)
-    duration_tab = re.findall('[0123456789][0123456789]*_[0123456789][0123456789]*', content)
-    return duration_tab
             
 def getBigining(filename):
     """Get the bigining of the speech in the cha file (str). If the speech duration 
@@ -38,10 +33,10 @@ def getBigining(filename):
     return on
 
 def getEnd(filename):
+    """ Read a cha file and get the end of the last speech in the file """
     content = extractFileContent(filename)
     last_duration = re.findall("[0123456789][0123456789]*_[0123456789][0123456789]*", content)[-1]
     off = last_duration.split('_')[1]
-    print(off)
     return off
 
 def get_duration(file):
@@ -58,7 +53,6 @@ def get_duration(file):
 
 def cut_video(video_path, dur,overlap,in_wav, out_folder, begin, end):
     """ take a video a duration and an ovelap and create extract with the duration and le overlap"""
-    print ("===============" + in_wav)
     on = float(begin)
     off = on + float(dur)
     while off <= float(end):
@@ -74,7 +68,6 @@ def cut_video(video_path, dur,overlap,in_wav, out_folder, begin, end):
         cmd = ['ffmpeg', '-ss', '{}'.format(hour_on),
                '-i', '{}'.format(video_path), '-c', 'copy','-an' ,'-t','{}'.format(hour_dur),
                out_file]
-        print (cmd)
         process = subprocess.call(cmd)
         on = on + float(dur) - float(overlap)
         off = off + float(dur) - float(overlap)
@@ -94,7 +87,7 @@ def main():
     ap.add_argument("-cha", "--cha", help="if a cha folder file is specified, the begin and the and of the cutting will match with the corresponding cha file" )
     args = vars(ap.parse_args())
 
-    # read arguments
+    # read arguments and call cut_video function
     folderPath = args["input"]
     for filename in os.listdir(folderPath):
         videoPath = folderPath+'/'+filename
@@ -102,21 +95,18 @@ def main():
             namelist = filename.split('/')
             name = namelist[-1]
             name = name.split('.')[0]
-            if args.get("cha", None) is not None:
+            if args.get("cha", None) is not None: 
                 chafile = args["cha"] + "/" + name + ".cha"
                 if os.path.isfile(chafile):
-                    print("--------------------- " + chafile)
                     on = float(getBigining(chafile))*0.001
                     if (on >= 0):
                         if float(args["start"]) > on:
                             on = float(args["start"])
                         off = float(getEnd(chafile))*0.001
-                        print("end cha file " + str(off))
                         cut_video(videoPath,args["duration"],args["overlap"], name, args["output"], on, off)
             else:
                 totalDur = get_duration(videoPath)
                 begin = args["start"] # default : start the cut after 2 minutes
-                print("totalDur" + str(totalDur))
                 cut_video(videoPath,args["duration"],args["overlap"], name, args["output"],float(begin), float(totalDur) )
 
     
