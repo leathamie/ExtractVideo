@@ -1,5 +1,5 @@
 # Video splitter with ffmpeg
-Both script create some video extracts, you can split videos into regular segments (with or without overlap) or follow a file that contains the cutting times.
+Both script create some video extracts that launch themselves from the command line, you can split videos into regular segments (with or without overlap) or follow a file that contains the cutting times.
 ## Prerequisites
 These scripts work with python 3 and ffmpeg 2.8.14 on ubuntu 16.04
 ## create_extracts_from_files.py
@@ -21,7 +21,7 @@ Allows to cut videos into regular clips, it is designed to cut a large number of
 - the end of the cutting -e : by default we go to the end of the video
 - a.cha"-cha'  file folder: videos in the CHILDES free corpus often have.cha files associated with the same name with speech transcription. If an.cha file is specified then the splitting will be done according to the beginning and the end of the transcription.
 
-Get details with -h :
+Get details with -h in command line:
 
 ```
 >>> python create_extracts_with_overlap.py -h
@@ -47,7 +47,7 @@ Get details with -h :
                             cha file
 ```
 
-example of minimum input:
+example of minimum input in command line:
 
 ```
 python create_extracts_with_overlap.py -i'data/videos' -o'data/extracts'
