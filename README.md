@@ -1,5 +1,7 @@
 # Video splitter with ffmpeg
 Both script create some video extracts, you can split videos into regular segments (with or without overlap) or follow a file that contains the cutting times.
+## Prerequisites
+These scripts work with python 3 and ffmpeg 2.8.14 on ubuntu 16.04
 ## create_extracts_from_files.py
 Small functions that cut out functions, they can be used for inspiration (for example to process text files that output motion detect), but each function only works in a very specific frame.
 '''
